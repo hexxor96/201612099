@@ -49,9 +49,9 @@ public class Pasajero {
 		this.turnos = value;
 	}
         
-	public final String toString(){
+	public final String tostring(){
 		String cadena = "";
-		cadena += "id: " + to_string(id) + "\n documento: " + to_string(documento) + "\n maletas: " + to_string(maletas) + "\n Turnos: " + to_string(turnos);
+		cadena += "id: " + id + "\n documento: " + documento + "\n maletas: " + maletas + "\n Turnos: " + turnos;
 		return cadena;
 	}
 }

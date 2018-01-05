@@ -15,7 +15,7 @@ public class Avion
 	}
 	public final String toString(){
 		String avion = "";
-		avion = "id: " + to_string(id) + "\n turnos: " + to_string(turnos) + "\n mantenimiento: " + to_string(mantenimiento) + "\n tipo: " + to_string(tipo);
+		avion = "id: " + id + "\n turnos: " + turnos + "\n mantenimiento: " + mantenimiento + "\n tipo: " + tipo;
 		return avion;
 	}
 	public Avion(){

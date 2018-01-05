@@ -20,7 +20,7 @@ public class Nodo {
         
 	public Nodo(Pasajero pasajero){
                 
-                this.pasajero.copyFrom(pasajero);
+                this.pasajero = pasajero;
 		this.anterior = null;
 		this.siguiente = null;
 		this.arriba = null;
@@ -36,7 +36,7 @@ public class Nodo {
 	}
         
 	public Nodo(Avion avion){
-		this.avion.copyFrom(avion);
+		this.avion = avion;
 		this.anterior = null;
 		this.siguiente = null;
 		this.arriba = null;

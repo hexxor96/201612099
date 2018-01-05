@@ -7,9 +7,9 @@ public class ListaEscritorio {
 	public int tamanioE;
         
 	public ListaEscritorio(Escritorios primero, Escritorios ultimo, int tamanioE){
-		this.primero = primero;
-		this.ultimo = ultimo;
-		this.tamanioE = tamanioE;
+		this.primero = null;
+		this.ultimo = null;
+		this.tamanioE = 0;
 	}
         
 	public final void insertar(byte desk){
@@ -26,7 +26,7 @@ public class ListaEscritorio {
 		++tamanioE;
 	}
         
-	public final Escritorios * struct getEscritorio(byte desk){
+	public final Escritorios getEscritorio(byte desk){
 		if (this.primero != null){
 			Escritorios aux = this.primero;
 			while (aux != null){

@@ -51,7 +51,7 @@ public class Pila {
 			Nodo aux = this.cabeza;
 			while (aux != null){
 				System.out.print("Pila: ");
-				System.out.print(to_string(aux.numero));
+				System.out.print(aux.numero);
 				System.out.print("\n");
 				aux = aux.siguiente;
 			}

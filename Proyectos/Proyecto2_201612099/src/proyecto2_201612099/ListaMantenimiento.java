@@ -5,7 +5,7 @@ public class ListaMantenimiento {
 	public Mantenimiento primero;
 	public Mantenimiento ultimo;
         
-	public ListaMantenimiento(){
+	public ListaMantenimiento(Mantenimiento primero, Mantenimiento ultimo){
 		this.primero = null;
 		this.ultimo = null;
         }
@@ -26,7 +26,7 @@ public class ListaMantenimiento {
 		if (this.primero != null){
 			Mantenimiento busca = this.buscarM(numero);
 			if (busca != null){
-				busca.avionesM.pushA(new Avion(avion));
+				busca.avionesM.pushA(avion);
 			}
 			else{
 				System.out.print("No se encontro la estacion !!");
@@ -40,7 +40,7 @@ public class ListaMantenimiento {
 
 	}
         
-	public final Mantenimiento * struct buscarM(int numero){
+	public final Mantenimiento buscarM(int numero){
 		if (this.primero != null){
 			Mantenimiento buscar = this.primero;
 			while (buscar != null){
@@ -57,7 +57,7 @@ public class ListaMantenimiento {
 		if (this.primero != null){
 			Mantenimiento aux = this.primero;
 			while (aux != null){
-				System.out.print(to_string(aux.numero));
+				System.out.print(aux.numero);
 				System.out.print("\n");
 				aux.avionesM.recorrerA();
 				aux = aux.siguiente;

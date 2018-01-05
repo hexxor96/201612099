@@ -95,14 +95,7 @@ public class Inicio extends javax.swing.JFrame {
 
     private void empezarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_empezarActionPerformed
         // TODO add your handling code here:
-        if (!this.ui.lineEdit.text().isEmpty())
-		{
-			QString st1 = this.ui.avion.text();
-			QString st2 = this.ui.escritorio.text();
-			QString st3 = this.ui.mantenimiento.text();
-			Simulador sim = new Simulador(st1, st2, st3, this);
-			sim.exec();
-		}
+
     }//GEN-LAST:event_empezarActionPerformed
 
     /**
