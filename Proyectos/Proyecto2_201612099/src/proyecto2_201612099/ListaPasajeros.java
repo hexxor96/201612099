@@ -1,15 +1,15 @@
 package proyecto2_201612099;
 
-public class ListaPasajeros extends NodoPasajero {
+public class ListaPasajeros extends Nodo {
     
-    private NodoPasajero principio;
+    private Nodo principio;
     private int tam;
 
-    public NodoPasajero getPrincipio(){
+    public Nodo getPrincipio(){
         return principio;
     }
     
-    public void setPrincipio(NodoPasajero principio){
+    public void setPrincipio(Nodo principio){
         this.principio = principio;
     }
     
@@ -23,7 +23,7 @@ public class ListaPasajeros extends NodoPasajero {
     }
         
     public void insertarAlFrente(int valor, int valor1, int valor2, int valor3){
-        NodoPasajero npasajero = new NodoPasajero();
+        Nodo npasajero = new Nodo();
         npasajero.setid(valor);
         npasajero.setCMaletas(valor1);
         npasajero.setCDocumentos(valor2);
@@ -50,7 +50,7 @@ public class ListaPasajeros extends NodoPasajero {
     }
 
     public void insertarAlFinal(int valor, int valor1, int valor2, int valor3){
-        NodoPasajero npasajero = new NodoPasajero();
+        Nodo npasajero = new Nodo();
         npasajero.setid(valor);
         npasajero.setCMaletas(valor1);
         npasajero.setCDocumentos(valor2);
@@ -59,7 +59,7 @@ public class ListaPasajeros extends NodoPasajero {
             principio = npasajero;
         }
         else{
-            NodoPasajero aux = principio;
+            Nodo aux = principio;
             while(aux.getsiguiente() != null){
                 aux = aux.getsiguiente();
             }
@@ -75,7 +75,7 @@ public class ListaPasajeros extends NodoPasajero {
         if ( primerNodo == ultimoNodo )
         primerNodo = ultimoNodo = null;
         else{
-        NodoPasajero actual = primerNodo;
+        Nodo actual = primerNodo;
 
         while ( actual.siguienteNodo != ultimoNodo )
         actual = actual.siguienteNodo;
@@ -96,7 +96,7 @@ public class ListaPasajeros extends NodoPasajero {
             if (ppasajero == 0) {
                 return principio.getid();
             }else{
-                NodoPasajero aux = principio;
+                Nodo aux = principio;
                 for (int i = 0; i < ppasajero; i++) {
                     aux = aux.getsiguiente();
                 }
@@ -108,7 +108,7 @@ public class ListaPasajeros extends NodoPasajero {
     }
         
     public boolean buscar(int ref){
-        NodoPasajero aux = principio;
+        Nodo aux = principio;
         boolean buscado = false;
         while(aux != null && buscado != true){
             if (ref== aux.getid()){
@@ -128,7 +128,7 @@ public class ListaPasajeros extends NodoPasajero {
         } 
 
         System.out.printf( "La %s es: ", nombre );
-        NodoPasajero actual = primerNodo;
+        Nodo actual = primerNodo;
 
         while ( actual != null ){
         System.out.printf( "%s ", actual.datos );
