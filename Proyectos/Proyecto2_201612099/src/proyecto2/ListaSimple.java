@@ -7,6 +7,15 @@ public class ListaSimple
 	public sNodo ultimo;
 	public int length;
 
+                public static Escritorio crearEscritorio(int id_){
+		Escritorio nuevo = new Escritorio();
+		nuevo.id = id_;
+		nuevo.cola = new ColaSimple();
+		nuevo.pilaDocumentos = new Pila();
+		return nuevo;
+
+	}
+                
         public static int crearLista(ListaSimple lista){
 		lista.primero = null;
 		lista.ultimo = null;

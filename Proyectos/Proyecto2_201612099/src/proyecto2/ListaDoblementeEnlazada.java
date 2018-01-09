@@ -143,14 +143,12 @@ public class ListaDoblementeEnlazada
 		texto += "}\n}\n";
 		return texto;
 	}
-        	
-        public static Escritorio crearEscritorio(int id_){
-		Escritorio nuevo = new Escritorio();
-		nuevo.id = id_;
-		nuevo.cola = new ColaSimple();
-		nuevo.pilaDocumentos = new Pila();
-		return nuevo;
-
+        	       
+        public static int crearEscritorios(ListaDoblementeEnlazada lista, int cantidad){
+		for (int i = 0;i < cantidad;i++){
+			ListaDoblementeEnlazada.insertar(lista, ListaSimple.crearEscritorio(i + 65));
+		}
+		return 0;
 	}
         
 	public static int ingresar(ColaSimple cola, Pasajero pasajero){

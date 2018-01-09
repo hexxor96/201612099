@@ -23,7 +23,7 @@ public class Inicio extends javax.swing.JFrame {
 	public ColaSimpleAviones colaAviones;
 	public ListaSimple listaMantenimiento;
         public int numeroAviones1;
-        public int numeroEscritorios;
+        public int numeroEscritorios1;
         public int numeroEstaciones;
         public int turnos;
         
@@ -73,27 +73,98 @@ public class Inicio extends javax.swing.JFrame {
             }
 	}
          
-        public void Mantenimiento(){
-                            while (listaMantenimiento.primero != null){
-                            if (listaMantenimiento.primero.avion == null){
-				if (colaAviones.primero != null){
-					listaMantenimiento.primero.avion = colaAviones.primero.avion;
-					ColaSimpleAviones.dequeue(colaAviones);
-				}
-				listaMantenimiento.primero = listaMantenimiento.primero.siguiente;
+        private int desabordaje(ColaDoblementeEnlazada cola){
+                String texto="";
+		if (cola.primero != null){
+			if (cola.primero.avion.desabordaje > 0){
+				texto = texto + "Avion desbordando: " + cola.primero.avion.id + ".\n";
+				cola.primero.avion.desabordaje--;
 			}
 			else{
-				if (listaMantenimiento.primero.avion.mantenimiento > 0){
-					listaMantenimiento.primero.avion.mantenimiento--;
-					listaMantenimiento.primero = listaMantenimiento.primero.siguiente;
+				for (int i = 1;i <= cola.primero.avion.pasajeros;i++){
+					Pasajero pasajero = ColaSimple.crearPasajero(contadorPasajeros,cola.primero.avion.id);
+					ColaSimple.queue(colaSimple,pasajero);
+					for (int j = 0; j < pasajero.maletas; j++){
+						ListaDobleCircular.insertar(listaMaletas);
+					}
+					contadorPasajeros++;
+				}
+				texto = texto + "Avion " + cola.primero.avion.id + " pasa a estacion de mantenimiento.\n";
+				ColaSimpleAviones.queue(colaAviones,cola.primero.avion);
+				ColaDoblementeEnlazada.dequeue(cola);
+			}                        
+                textEdit1.setText(texto);
+		}
+		return 0;
+	}
+        
+        private int registrarPasajeros(){
+		ldNodo aux = listaEscritorios.primero;
+		while (aux != null){
+			if (aux.escritorio.cola.length < 10){
+				while ( ColaSimple.getSize(colaSimple) != 0 && aux.escritorio.cola.length < 10){
+					ColaSimple.queue(aux.escritorio.cola,ColaSimple.primero(colaSimple));
+					ColaSimple.dequeue(colaSimple);
+				}
+				aux = aux.siguiente;
+			}
+			else{
+				aux = aux.siguiente;
+			}
+		}
+		return 0;
+	}
+        
+        private int atender(){
+		ldNodo aux = listaEscritorios.primero;
+		while (aux != null){
+			if (aux.escritorio.cola.primero != null){
+				if (aux.escritorio.cola.primero.pasajero.numeroTurnos > 0){
+					if (aux.escritorio.pilaDocumentos.length != aux.escritorio.cola.primero.pasajero.documentos){
+						for (int i = 0; i < aux.escritorio.cola.primero.pasajero.documentos;i++){
+							Pila.push(aux.escritorio.pilaDocumentos);
+						}
+					}
+					aux.escritorio.cola.primero.pasajero.numeroTurnos--;
 				}
 				else{
-					listaMantenimiento.primero.avion = null;
-					listaMantenimiento.primero = listaMantenimiento.primero.siguiente;
+					for (int i = 0;i < aux.escritorio.cola.primero.pasajero.maletas;i++){
+						ListaDobleCircular.eliminar(listaMaletas);
+					}
+					for (int i = 0;i < aux.escritorio.cola.primero.pasajero.documentos;i++){
+						Pila.pop(aux.escritorio.pilaDocumentos);
+					}
+					ColaSimple.dequeue(aux.escritorio.cola);
+				}
+			}
+			aux = aux.siguiente;
+		}
+		return 0;
+	}
+        
+        private int darMantenimiento(){
+		sNodo aux = listaMantenimiento.primero;
+		while (aux != null){
+			if (aux.avion == null){
+				if (colaAviones.primero != null){
+					aux.avion = colaAviones.primero.avion;
+					ColaSimpleAviones.dequeue(colaAviones);
+				}
+				aux = aux.siguiente;
+			}
+			else{
+				if (aux.avion.mantenimiento > 0){
+					aux.avion.mantenimiento--;
+					aux = aux.siguiente;
+				}
+				else{
+					aux.avion = null;
+					aux = aux.siguiente;
 				}
 			}
 		}
-        }
+		return 0;
+	}
         
         public void pintarGrafo(){
         panel.removeAll();
@@ -278,23 +349,24 @@ public class Inicio extends javax.swing.JFrame {
         this.contadorEscritorios = 1;
         this.contadorMantenimiento = 1;
         this.numeroAviones1 = Integer.parseInt(txtAviones.getText());
-        this.numeroEscritorios = Integer.parseInt(txtEscritorios.getText());
+        this.numeroEscritorios1 = Integer.parseInt(txtEscritorios.getText());
         this.numeroEstaciones = Integer.parseInt(txtEstaciones.getText());
-		if (numeroAviones1 > 0){
+		if (txtAviones.getText() == ""){
 		}
 		else{
+                    numeroAviones = numeroAviones1;
 		}
 		ListaDoblementeEnlazada.crearLista(listaEscritorios);
-		if (numeroEscritorios > 0){
+		if (txtEscritorios.getText() == ""){
 		}
 		else{                      
-			ListaDoblementeEnlazada.crearEscritorio(numeroEscritorios);
-			listaEscritorios.numeroEscritorios = numeroEscritorios;
+			ListaDoblementeEnlazada.crearEscritorios(listaEscritorios, numeroEscritorios1);
+                        listaEscritorios.numeroEscritorios = numeroEscritorios1;
 		}
 		ListaDobleCircular.crearLista(listaMaletas);
 		ColaDoblementeEnlazada.crearCola(cola);
                 ListaSimple.crearLista(listaMantenimiento);
-		if (numeroEstaciones > 0){
+		if (txtEstaciones.getText() == ""){
 		}
 		else{
                     ListaSimple.crearEstaciones(listaMantenimiento, numeroEstaciones);
@@ -313,67 +385,17 @@ public class Inicio extends javax.swing.JFrame {
 					ColaDoblementeEnlazada.queue(cola, nuevo);
 					actual1 = actual1 + "Arriba el avion numero " + contadorAviones + ".\n";
 					contadorAviones++;
+                                }
+                                desabordaje(cola);
+				registrarPasajeros();
+				atender();
+				darMantenimiento();
 				actual1 = actual1 + "Pasajeros en cola para ser atendidos: " + colaSimple.length + ".\n";
                                 actual1 = actual1 + ListaSimple.escribirInformacion(listaMantenimiento);
 				actual1 = actual1 + "Cantidad de maletas en el sistema: " + listaMaletas.length + ".\n";
                                 actual1 = actual1 + ListaDoblementeEnlazada.escribirInformacion(listaEscritorios);
 				actual1 = actual1 + "///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n";
-                                }
-                                
-                                
-                                else{
-                                        actual1 = actual1 + "Pasajeros en cola para ser atendidos: " + colaSimple.length + ".\n";
-                                actual1 = actual1 + ListaSimple.escribirInformacion(listaMantenimiento);
-				actual1 = actual1 + "Cantidad de maletas en el sistema: " + listaMaletas.length + ".\n";
-                                actual1 = actual1 + ListaDoblementeEnlazada.escribirInformacion(listaEscritorios);
-                                actual1 = actual1 + "///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n";
-                                                                
-                 
-                            
-		if (cola.primero != null){
-			if (cola.primero.avion.desabordaje > 0){
-				actual1 = actual1 + "Avion desbordando: " + cola.primero.avion.id + ".\n";
-				cola.primero.avion.desabordaje--;
-			}
-			else{
-				//Se crean los pasajeros del avion y se meten en la cola simple
-				for (int i = 1;i < cola.primero.avion.pasajeros;i++){
-					Pasajero pasajero = ColaSimple.crearPasajero(contadorPasajeros,cola.primero.avion.id);
-					ColaSimple.queue(colaSimple,pasajero);
-                                        int mantenimiento = ListaSimple.crearEstaciones(listaMantenimiento, numeroEstaciones);
-                                        
-                                            Escritorio escritorio = ListaDoblementeEnlazada.crearEscritorio(numeroEscritorios);
-                                        
-                                            ListaDoblementeEnlazada.insertar(listaEscritorios, escritorio);  
-                                        
-                                       
                 
-					for (int j = 0; j < pasajero.maletas; j++){
-						ListaDobleCircular.insertar(listaMaletas);
-					}
-                                        for(int k = 0; k < mantenimiento; k++ ){
-                                            ListaSimple.insertar(listaMantenimiento, mantenimiento);  
-                                            Mantenimiento();
-                                            
-                                        }
-                                }
-				actual1 = actual1 + "Avion " + cola.primero.avion.id + " pasa a estacion de mantenimiento.\n";
-				ColaSimpleAviones.queue(colaAviones,cola.primero.avion);
-				ColaDoblementeEnlazada.dequeue(cola);
-                               ldNodo aux1 = listaEscritorios.primero;
-                                
-                        
-
-                                      
-                                }        
-                                
-			}
-		}
-                
-
-
-	
-		
                         graficarGrafo();
                         graficarf();
                         pintarGrafo();               
