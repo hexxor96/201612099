@@ -326,7 +326,7 @@ public class Inicio extends javax.swing.JFrame {
                                 actual1 = actual1 + ListaSimple.escribirInformacion(listaMantenimiento);
 				actual1 = actual1 + "Cantidad de maletas en el sistema: " + listaMaletas.length + ".\n";
                                 actual1 = actual1 + ListaDoblementeEnlazada.escribirInformacion(listaEscritorios);
-				actual1 = actual1 + "///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n";
+                                actual1 = actual1 + "///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n";
                                                                 
                  
                             
@@ -341,58 +341,28 @@ public class Inicio extends javax.swing.JFrame {
 					Pasajero pasajero = ColaSimple.crearPasajero(contadorPasajeros,cola.primero.avion.id);
 					ColaSimple.queue(colaSimple,pasajero);
                                         int mantenimiento = ListaSimple.crearEstaciones(listaMantenimiento, numeroEstaciones);
+                                        
+                                            Escritorio escritorio = ListaDoblementeEnlazada.crearEscritorio(numeroEscritorios);
+                                        
+                                            ListaDoblementeEnlazada.insertar(listaEscritorios, escritorio);  
+                                        
                                        
+                
 					for (int j = 0; j < pasajero.maletas; j++){
 						ListaDobleCircular.insertar(listaMaletas);
 					}
                                         for(int k = 0; k < mantenimiento; k++ ){
-                                            ListaSimple.insertar(listaMantenimiento, mantenimiento);
+                                            ListaSimple.insertar(listaMantenimiento, mantenimiento);  
                                             Mantenimiento();
+                                            
                                         }
                                 }
 				actual1 = actual1 + "Avion " + cola.primero.avion.id + " pasa a estacion de mantenimiento.\n";
 				ColaSimpleAviones.queue(colaAviones,cola.primero.avion);
 				ColaDoblementeEnlazada.dequeue(cola);
                                ldNodo aux1 = listaEscritorios.primero;
-                                while (aux1 != null){
-                                if (aux1.escritorio.cola.primero != null){
-				if (aux1.escritorio.cola.primero.pasajero.numeroTurnos > 0){
-					if (aux1.escritorio.pilaDocumentos.length != aux1.escritorio.cola.primero.pasajero.documentos){
-						for (int i = 0; i < aux1.escritorio.cola.primero.pasajero.documentos;i++){
-							Pila.push(aux1.escritorio.pilaDocumentos);
-						}
-					}
-					aux1.escritorio.cola.primero.pasajero.numeroTurnos--;
-				}
-				else{
-					for (int i = 0;i < aux1.escritorio.cola.primero.pasajero.maletas;i++){
-						ListaDobleCircular.eliminar(listaMaletas);
-					}
-					for (int i = 0;i < aux1.escritorio.cola.primero.pasajero.documentos;i++){
-						Pila.pop(aux1.escritorio.pilaDocumentos);
-					}
-					ColaSimple.dequeue(aux1.escritorio.cola);
-				}
-			}
-			aux1 = aux1.siguiente;
-		}
-                        ldNodo aux = listaEscritorios.primero;
-		while (aux != null){
-			if (aux.escritorio.cola.length < 10){
-				//Enviar pasajeros hasta llegar a 10 o quedarse sin pasajeros
-				while (ColaSimple.primero(colaSimple) != null && aux.escritorio.cola.length < 10){
-					ColaSimple.queue(aux.escritorio.cola,ColaSimple.primero(colaSimple));
-					ColaSimple.dequeue(colaSimple);
-                                        Escritorio escritorio = ListaDoblementeEnlazada.crearEscritorio(numeroEscritorios);
-                                        ListaDoblementeEnlazada.insertar(listaEscritorios, escritorio);
-				}
-				aux = aux.siguiente;
-
-			}
-			else{
-				aux = aux.siguiente;
-			}
-		}
+                                
+                        
 
                                       
                                 }        
