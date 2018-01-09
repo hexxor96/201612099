@@ -78,14 +78,18 @@ public class ColaSimple
 				aux = aux.siguiente;
 			}
 		}
-		if (esVacia(cola) == 0){
+                if (esVacia(cola) == 0)
+		{
 			csNodo aux = cola.primero;
-			while (aux != null){
-				if (aux.siguiente != null){
+			while (aux != null)
+			{
+				if (aux.siguiente != null)
+				{
 					texto += "\"Pasajero " + aux.pasajero.id + "\"->\"Pasajero " + aux.siguiente.pasajero.id + "\";\n";
 					aux = aux.siguiente;
 				}
-				else{
+				else
+				{
 					aux = aux.siguiente;
 				}
 			}
@@ -98,9 +102,9 @@ public class ColaSimple
 		Pasajero nuevo = new Pasajero();
 		nuevo.avion = avion_;
 		nuevo.id = id_;
-		nuevo.maletas = (int) (Math.random()) %4 + 1;
-		nuevo.documentos = (int) (Math.random()) % 10 + 1;
-		nuevo.numeroTurnos = (int) (Math.random()) % 3 + 1;
+		nuevo.maletas = (int)(Math.random()*4) + 1;
+		nuevo.documentos = (int)(Math.random()*10) + 1;
+		nuevo.numeroTurnos = (int)(Math.random()*3) + 1;
 		return nuevo;
 	}
 }

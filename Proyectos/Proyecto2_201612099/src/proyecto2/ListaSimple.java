@@ -30,6 +30,13 @@ public class ListaSimple
 		return 0;
 	}
         
+        public static int esVacia(ListaSimple lista){
+		if (lista.length > 0){
+			return 0;
+		}
+		return 1;
+	}
+        
 	public static String escribirDOT(ListaSimple lista){
 		String texto = "subgraph cluster_6 { ";
 		texto += "label = \"Estaciones de mantenimiento\";\n";
@@ -47,20 +54,19 @@ public class ListaSimple
 					texto += "<f1>Ocupado? No|";
 					texto += "<f3>Turnos: 0";
 				}
-				texto += "}\" shape=record];\n";
+                                texto += "}\" shape=record];\n";
 				aux = aux.siguiente;
 			}
 		}
 		texto += "{rank=same;\n";
+		//PARA COLOCAR LAS RELACIONES
 		if (lista.length > 0){
 			sNodo aux = lista.primero;
-			while (aux.siguiente != null)
-			{
+			while (aux.siguiente != null){
 				texto += "\"Estacion " + aux.id + "\"->\"Estacion " + aux.siguiente.id + "\";";
 				aux = aux.siguiente;
 			}
 		}
-
 		texto += "}\n}\n";
 		return texto;
 	}
@@ -76,25 +82,25 @@ public class ListaSimple
 	}
 
 	public static String escribirInformacion(ListaSimple lista){
-		String texto = "*********Estaciones de mantenimiento*********\n";
+		String texto = "*********Estaciones de mantenimiento*********" + "\n";
 		if (lista.length > 0){
 			sNodo aux = lista.primero;
 			while (aux != null){
-				texto += "Estacion " + aux.id + ":\n";
+				texto += "ESTACION: " + aux.id + "\n";
 				if (aux.avion != null){
-					texto += "       Estado: Ocupado.\n";
-					texto += "       Avion atendido: " + aux.avion.id + ".\n";
-					texto += "       Turnos restantes: " + aux.avion.mantenimiento + ".\n";
+					texto += "       Estado: Ocupado" + "\n";
+					texto += "       Avion atendido: " + aux.avion.id + "\n";
+					texto += "       Turnos restantes: " + aux.avion.mantenimiento + "\n";
 				}
 				else{
-					texto += "       Estado: libre.\n";
-					texto += "       Avion atendido: Ninguno.\n";
-					texto += "       Turnos restantes: ....\n";
+					texto += "       Estado: libre" + "\n\r";
+					texto += "       Avion atendido: Ninguno" + "\n\r";
+					texto += "       Turnos restantes: " + "\n\r";
 				}
 				aux = aux.siguiente;
 			}
 		}
-		texto += "***********************************************\n";
+		texto += "***********************************************" + "\n\r";
 		return texto;
 	}   
 }

@@ -85,11 +85,12 @@ public class ListaDoblementeEnlazada
 					texto += "<f1>Ocupado? No|";
 					texto += "<f3>Documentos: 0";
 				}
-				texto += "}\" shape=record];\n";
+                                texto += "}\" shape=record];\n";
 				aux = aux.anterior;
 			}
 		}
 		texto += "{rank=same;\n";
+		//PARA COLOCAR LAS RELACIONES
 		if (esVacia(lista) == 0){
 			ldNodo aux = lista.primero;
 			while (aux != null){
@@ -105,12 +106,19 @@ public class ListaDoblementeEnlazada
 		}
 		texto += "}\n";
 		texto += "{";
-		if (esVacia(lista) == 0){
+		//Para colocar los pasajeros en cada escritorio
+		if (esVacia(lista) == 0)
+		{
+			//SE RECORRE CADA UNO DE LOS ESCRITORIOS
 			ldNodo aux = lista.primero;
-			while (aux != null){
-				if (aux.escritorio.cola.primero != null){
+			while (aux != null)
+			{
+				if (aux.escritorio.cola.primero != null)
+				{
+					//SE RECORRE CADA PASAJERO EN ESTA COLA
 					csNodo aux2 = aux.escritorio.cola.primero;
-					while (aux2 != null){
+					while (aux2 != null)
+					{
 						texto += "\"Pasajero2 " + aux2.pasajero.id + "\"";
 						texto += "[label=\"{<f0>Pasajero: " + aux2.pasajero.id + "|";
 						texto += "<fi>Avion: " + aux2.pasajero.avion + "|";
@@ -135,8 +143,8 @@ public class ListaDoblementeEnlazada
 		texto += "}\n}\n";
 		return texto;
 	}
-        
-        public static Escritorio crearEscritorio(byte id_){
+        	
+        public static Escritorio crearEscritorio(int id_){
 		Escritorio nuevo = new Escritorio();
 		nuevo.id = id_;
 		nuevo.cola = new ColaSimple();
@@ -145,19 +153,13 @@ public class ListaDoblementeEnlazada
 
 	}
         
-	public static int crearEscritorios(ListaDoblementeEnlazada lista, int cantidad){
-		for (int i = 0; i < cantidad; i++){
-		}
-		return 0;
-	}
-        
 	public static int ingresar(ColaSimple cola, Pasajero pasajero){
 		System.out.print("aqui");
-		System.out.print("\n");
+		System.out.print("");
 		System.out.print(cola.primero);
-		System.out.print("\n");
-		System.out.print("aqui no xd ");
-		System.out.print("\n");
+		System.out.print("");
+		System.out.print("aqui no ");
+		System.out.print("");
 		return 0;
 	}
         
@@ -174,25 +176,26 @@ public class ListaDoblementeEnlazada
 	}
         
 	public static String escribirInformacion(ListaDoblementeEnlazada lista){
-		String texto = "-------Escritorios de registro------\n";
+		String texto = "************Escritorios de registro********************" + "\n";
 		if (esVacia(lista) == 0){
 			ldNodo aux = lista.primero;
 			while (aux != null){
 				texto += "Escritorio " + aux.escritorio.id + "\n";
 				if (aux.escritorio.cola.primero != null){
-					texto += "        Ocupado? Si \n";
+					texto += "        Ocupado? Si" + "\n\r";
 					texto += "        Pasajero atendido: " + aux.escritorio.cola.primero.pasajero.id + "\n";
 					texto += "        Documentos: " + aux.escritorio.pilaDocumentos.length + "\n";
 					texto += "        Turnos: " + aux.escritorio.cola.primero.pasajero.numeroTurnos + "\n";
 				}
 				else{
-					texto += "        Ocupado? No\n";
-					texto += "        Documentos: 0\n";
+					texto += "        Ocupado? No" + "\n";
+					texto += "        Documentos: 0" + "\n";
+                                        
 				}
 				aux = aux.siguiente;
 			}
 		}
-		texto += "-----------------------------------\n";
+		texto += "*************************************************************" + "\n";
 		return texto;
 	}
         

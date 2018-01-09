@@ -1,134 +1,116 @@
 package proyecto2;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Inicio extends javax.swing.JFrame {
         
-	private int contadorAviones = 1;
-	private int numeroAviones = 0;
-	private int contadorTurno = 1;
-	private ColaSimple colaSimple = new ColaSimple();
-	private int contadorPasajeros = 1;
-        private ColaDoblementeEnlazada cola = new ColaDoblementeEnlazada();
-	private ListaDoblementeEnlazada listaEscritorios = new ListaDoblementeEnlazada();
-	private ListaDobleCircular listaMaletas = new ListaDobleCircular();
-	private ColaSimpleAviones colaAviones = new ColaSimpleAviones();
-	private ListaSimple listaMantenimiento = new ListaSimple();
+	public int contadorAviones = 1;
+	public int numeroAviones = 0;
+	public int contadorTurno = 1;
+        public int contadorEscritorios = 1;
+        public int contadorEstaciones = 1;
+        public int equipaje = 1;
+	public ColaSimple colaSimple = new ColaSimple();
+	public int contadorPasajeros = 1;
+        public int contadorMantenimiento = 1;
+        public ColaDoblementeEnlazada cola;
+	public ListaDoblementeEnlazada listaEscritorios;
+	public ListaDobleCircular listaMaletas;
+	public ColaSimpleAviones colaAviones;
+	public ListaSimple listaMantenimiento;
+        public int numeroAviones1;
+        public int numeroEscritorios;
+        public int numeroEstaciones;
         public int turnos;
         
     public Inicio(){  
         initComponents();        
+        jLabel1.setVisible(false);
+        txtTurnos.setVisible(false);
+        jTextField1.setVisible(false);
     }
-	public void graficar(){
-
-		String texto = "digraph G { \n";
-		texto += "node [shape=box,style=filled,color=black,fontcolor=white,fontname=\"Helvetica\"]; \n";
-		texto += ColaDoblementeEnlazada.escribirDOT(cola);
-		texto += ColaSimple.escribirDOT(colaSimple);
-		texto += ListaDoblementeEnlazada.escribirDOT(listaEscritorios);
-		texto += ListaDobleCircular.escribirDOT(listaMaletas);
-		texto += ColaSimpleAviones.escribirDOT(colaAviones);
-		texto += ListaSimple.escribirDOT(listaMantenimiento);
-		texto += "}";
-		String outputFilename = "Results.txt";
-	}
+	public void graficarGrafo(){
+                    try {                    
+                    String guardar = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";                    
+                    String fileInputPath = System.getProperty("user.dir")+"\\GrafoFinal1.txt";
+                    String fileOutputPath = System.getProperty("user.dir")+"\\GrafoFinal1.jpg";                    
+                    String tParam = "-Tjpg";
+                    String tOParam = "-o";                    
+                    String[] cmd = new String[5];
+                    cmd[0] = guardar;
+                    cmd[1] = tParam;
+                    cmd[2] = fileInputPath;
+                    cmd[3] = tOParam;
+                    cmd[4] = fileOutputPath;         
+                    Runtime rt = Runtime.getRuntime();      
+                    rt.exec(cmd);      
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    } finally {
+    }            
+    }
         
-	public void escribirEnConsola(String cadena){
-		String actual = textEdit1.getText();
-		actual = cadena;
-		textEdit1.setText(actual);
+        public void graficarf(){
+            try {
+                File archive = new File(System.getProperty("user.dir")+"\\GrafoFinal1.txt");
+                archive.delete();
+                File archive1 = new File(System.getProperty("user.dir")+"\\GrafoFinal1.txt");
+                FileWriter reescribir = new FileWriter(archive1,true);
+                reescribir.write("digraph G\n{\n");
+                reescribir.write("node [shape=box,style=filled,color=black,fontcolor=white,fontname=\"Helvetica\"]; \n");
+                reescribir.write(ColaDoblementeEnlazada.escribirDOT(cola));
+                reescribir.write(ColaSimple.escribirDOT(colaSimple));
+                reescribir.write(ListaDoblementeEnlazada.escribirDOT(listaEscritorios));
+                reescribir.write(ListaSimple.escribirDOT(listaMantenimiento));
+                reescribir.write(ColaSimpleAviones.escribirDOT(colaAviones));
+                reescribir.write("}\n");
+                reescribir.close();           
+            } catch (IOException ex) {
+                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+            }
 	}
-        
-	public void desabordaje(ColaDoblementeEnlazada cola){
-		if (cola.primero != null){
-			if (cola.primero.avion.desabordaje > 0){
-				escribirEnConsola("Avion desbordando: " + cola.primero.avion.id + ".\n");
-				cola.primero.avion.desabordaje--;
-			}
-			else{
-				for (int i = 1;i <= cola.primero.avion.pasajeros;i++){
-					Pasajero pasajero = ColaSimple.crearPasajero(contadorPasajeros,cola.primero.avion.id);
-					ColaSimple.queue(colaSimple,pasajero);
-					for (int j = 0; j < pasajero.maletas; j++){
-						ListaDobleCircular.insertar(listaMaletas);
-					}
-					contadorPasajeros++;
-				}
-				escribirEnConsola("Avion " + cola.primero.avion.id + " pasa a estacion de mantenimiento.\n");
-				ColaSimpleAviones.queue(colaAviones,cola.primero.avion);
-				ColaDoblementeEnlazada.dequeue(cola);
-			}
-		}
-	}
-
-	public void registrarPasajeros(){
-		ldNodo aux = listaEscritorios.primero;
-		while (aux != null){
-			if (aux.escritorio.cola.length < 10){
-				while (primero(cola) != 0 && aux.escritorio.cola.length < 10)
-				{
-					ColaSimple.queue(aux.escritorio.cola, ColaSimple.primero(colaSimple));
-					ColaSimple.dequeue(colaSimple);
-				}
-				aux = aux.siguiente;
-			}
-			else{
-				aux = aux.siguiente;
-			}
-		}
-	}
-        
-	public void atender(){
-		ldNodo aux = listaEscritorios.primero;
-		while (aux != null){
-			if (aux.escritorio.cola.primero != null){
-				if (aux.escritorio.cola.primero.pasajero.numeroTurnos > 0){
-					if (aux.escritorio.pilaDocumentos.length != aux.escritorio.cola.primero.pasajero.documentos){
-						for (int i = 0; i < aux.escritorio.cola.primero.pasajero.documentos;i++){
-							Pila.push(aux.escritorio.pilaDocumentos);
-						}
-					}
-					aux.escritorio.cola.primero.pasajero.numeroTurnos--;
-				}
-				else{
-					for (int i = 0;i < aux.escritorio.cola.primero.pasajero.maletas;i++){
-						ListaDobleCircular.eliminar(listaMaletas);
-					}
-					for (int i = 0;i < aux.escritorio.cola.primero.pasajero.documentos;i++)
-					{
-						Pila.pop(aux.escritorio.pilaDocumentos);
-					}
-
-					ColaSimple.dequeue(aux.escritorio.cola);
-				}
-			}
-			aux = aux.siguiente;
-		}
-	}
-        
-	public void darMantenimiento(){
-		sNodo aux = listaMantenimiento.primero;
-		while (aux != null){
-			if (aux.avion == null){
-				if (colaAviones.primero != null)
-				{
-					aux.avion = colaAviones.primero.avion;
+         
+        public void Mantenimiento(){
+                            while (listaMantenimiento.primero != null){
+                            if (listaMantenimiento.primero.avion == null){
+				if (colaAviones.primero != null){
+					listaMantenimiento.primero.avion = colaAviones.primero.avion;
 					ColaSimpleAviones.dequeue(colaAviones);
 				}
-				aux = aux.siguiente;
+				listaMantenimiento.primero = listaMantenimiento.primero.siguiente;
 			}
 			else{
-				if (aux.avion.mantenimiento > 0){
-					aux.avion.mantenimiento--;
-					aux = aux.siguiente;
+				if (listaMantenimiento.primero.avion.mantenimiento > 0){
+					listaMantenimiento.primero.avion.mantenimiento--;
+					listaMantenimiento.primero = listaMantenimiento.primero.siguiente;
 				}
 				else{
-					aux.avion = null;
-					aux = aux.siguiente;
+					listaMantenimiento.primero.avion = null;
+					listaMantenimiento.primero = listaMantenimiento.primero.siguiente;
 				}
 			}
 		}
-	}
+        }
+        
+        public void pintarGrafo(){
+        panel.removeAll();
+        Grafo grafo = new Grafo();
+        panel.setLayout(null);
+        grafo.setBounds(0, 0, 976, 785);
+        panel.add(grafo);
+        panel.repaint();
+        panel.setVisible(true);
+        grafo.setGrafo(System.getProperty("user.dir")+"\\GrafoFinal1.jpg");
+        
     
-
+    }
+        
+        
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -138,7 +120,7 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        ScrollArea = new javax.swing.JScrollPane();
+        panel = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         textEdit1 = new javax.swing.JTextArea();
         txtAviones = new javax.swing.JTextField();
@@ -152,8 +134,8 @@ public class Inicio extends javax.swing.JFrame {
         inicio = new javax.swing.JButton();
         btnTurno = new javax.swing.JButton();
         btnImprimir = new javax.swing.JButton();
-        CheckBox = new javax.swing.JCheckBox();
         label = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -161,229 +143,299 @@ public class Inicio extends javax.swing.JFrame {
         textEdit1.setRows(5);
         jScrollPane2.setViewportView(textEdit1);
 
-        txtAviones.setText("jTextField1");
+        txtEstaciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEstacionesActionPerformed(evt);
+            }
+        });
 
-        txtEscritorios.setText("jTextField2");
+        txtTurnos.setText("500");
 
-        txtEstaciones.setText("jTextField3");
+        jLabel1.setText("Turnos:");
 
-        txtTurnos.setText("jTextField4");
+        jLabel2.setText("Aviones:");
 
-        jLabel1.setText("jLabel1");
+        jLabel3.setText("Escritorios:");
 
-        jLabel2.setText("jLabel2");
+        jLabel4.setText("Mantenimiento:");
 
-        jLabel3.setText("jLabel3");
-
-        jLabel4.setText("jLabel4");
-
-        inicio.setText("jButton1");
+        inicio.setText("Iniciar ");
         inicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inicioActionPerformed(evt);
             }
         });
 
-        btnTurno.setText("jButton2");
+        btnTurno.setText("Siguiente");
         btnTurno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTurnoActionPerformed(evt);
             }
         });
 
-        btnImprimir.setText("jButton3");
+        btnImprimir.setText("Salir");
         btnImprimir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImprimirActionPerformed(evt);
             }
         });
 
-        CheckBox.setText("jCheckBox1");
+        jTextField1.setText("C:\\Program Files (x86)\\Graphviz2.38\\bin\\");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(inicio)
-                                    .addComponent(btnImprimir)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btnTurno)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(CheckBox)))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(18, 18, 18))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4))
-                        .addGap(55, 55, 55)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtTurnos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEstaciones, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtAviones, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEscritorios, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 192, Short.MAX_VALUE)
-                        .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(88, 88, 88)))
-                .addComponent(ScrollArea, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(ScrollArea))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel3)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(txtEscritorios)
+                                                .addComponent(txtAviones)
+                                                .addComponent(txtEstaciones))
+                                            .addGap(44, 44, 44)
+                                            .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(166, 166, 166))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(txtTurnos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                            .addComponent(inicio, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(31, 31, 31)
+                                            .addComponent(btnTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(33, 33, 33)
+                                            .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 59, Short.MAX_VALUE)))
+                                    .addGap(45, 45, 45))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(19, 19, 19)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(txtTurnos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel1))
-                            .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtAviones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtEscritorios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtEstaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(32, 32, 32)
-                        .addComponent(inicio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnTurno)
-                            .addComponent(CheckBox))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnImprimir)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
+                            .addGap(8, 8, 8)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtAviones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtEscritorios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtEstaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel4)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(59, 59, 59)
+                            .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(inicio, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(37, 37, 37)
+                    .addComponent(jScrollPane2)
+                    .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private void inicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inicioActionPerformed
         //Limpia el contador de aviones
-		contadorAviones = 1;
-		contadorTurno = 1;
-		textEdit1.setText("");
-		//Obtener el número de aviones para la simulación
-		if (txtAviones.getText() == ""){
+	this.contadorAviones = 1;
+	this.numeroAviones = 0;
+	this.contadorTurno = 1;
+        this.equipaje = 1;
+	this.colaSimple = new ColaSimple();
+	this.contadorPasajeros = 1;
+        this.cola = new ColaDoblementeEnlazada();
+	this.listaEscritorios = new ListaDoblementeEnlazada();
+	this.listaMaletas = new ListaDobleCircular();
+	this.colaAviones = new ColaSimpleAviones();
+        this.listaMantenimiento = new ListaSimple();
+        this.contadorAviones = 1;
+	this.contadorTurno = 1;
+        this.contadorEstaciones = 1;
+        this.contadorEscritorios = 1;
+        this.contadorMantenimiento = 1;
+        this.numeroAviones1 = Integer.parseInt(txtAviones.getText());
+        this.numeroEscritorios = Integer.parseInt(txtEscritorios.getText());
+        this.numeroEstaciones = Integer.parseInt(txtEstaciones.getText());
+		if (numeroAviones1 > 0){
 		}
 		else{
-			int numeroAviones = Integer.parseInt(txtAviones.getText());
 		}
 		ListaDoblementeEnlazada.crearLista(listaEscritorios);
-		if (txtEscritorios.getText() == ""){
+		if (numeroEscritorios > 0){
 		}
-		else{
-                        int numeroEscritorios = Integer.parseInt(txtEscritorios.getText());
-			ListaDoblementeEnlazada.crearEscritorios(listaEscritorios,numeroEscritorios);
+		else{                      
+			ListaDoblementeEnlazada.crearEscritorio(numeroEscritorios);
 			listaEscritorios.numeroEscritorios = numeroEscritorios;
 		}
 		ListaDobleCircular.crearLista(listaMaletas);
 		ColaDoblementeEnlazada.crearCola(cola);
                 ListaSimple.crearLista(listaMantenimiento);
-		if (txtEstaciones.getText() == ""){
+		if (numeroEstaciones > 0){
 		}
 		else{
-                    int numeroEstaciones = Integer.parseInt(txtEstaciones.getText());
                     ListaSimple.crearEstaciones(listaMantenimiento, numeroEstaciones);
 		}
     }//GEN-LAST:event_inicioActionPerformed
 
     private void btnTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTurnoActionPerformed
-                        if (txtTurnos.getText().equals("")){
-                            int numeroTurnos = Integer.parseInt(txtTurnos.getText());
-			if (numeroTurnos > 0){
-                                escribirEnConsola("/////////////////Turno " + contadorTurno + "////////////////\n");
+                        String actual1 = "";
+                        int tturnos = Integer.parseInt(txtTurnos.getText());
+			if (tturnos > 0){
+				actual1 = actual1 + "/////////////////Turno " + contadorTurno + "////////////////\n\r";
 				contadorTurno++;
-				if (contadorAviones <= numeroAviones){
+                                
+				if (contadorAviones < numeroAviones1){
 					Avion nuevo = ColaDoblementeEnlazada.crearAvion(contadorAviones);
 					ColaDoblementeEnlazada.queue(cola, nuevo);
-					escribirEnConsola("Arriba³ el avion numero " + contadorAviones + ".\n");
+					actual1 = actual1 + "Arriba el avion numero " + contadorAviones + ".\n";
 					contadorAviones++;
+				actual1 = actual1 + "Pasajeros en cola para ser atendidos: " + colaSimple.length + ".\n";
+                                actual1 = actual1 + ListaSimple.escribirInformacion(listaMantenimiento);
+				actual1 = actual1 + "Cantidad de maletas en el sistema: " + listaMaletas.length + ".\n";
+                                actual1 = actual1 + ListaDoblementeEnlazada.escribirInformacion(listaEscritorios);
+				actual1 = actual1 + "///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n";
+                                }
+                                
+                                
+                                else{
+                                        actual1 = actual1 + "Pasajeros en cola para ser atendidos: " + colaSimple.length + ".\n";
+                                actual1 = actual1 + ListaSimple.escribirInformacion(listaMantenimiento);
+				actual1 = actual1 + "Cantidad de maletas en el sistema: " + listaMaletas.length + ".\n";
+                                actual1 = actual1 + ListaDoblementeEnlazada.escribirInformacion(listaEscritorios);
+				actual1 = actual1 + "///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n";
+                                                                
+                 
+                            
+		if (cola.primero != null){
+			if (cola.primero.avion.desabordaje > 0){
+				actual1 = actual1 + "Avion desbordando: " + cola.primero.avion.id + ".\n";
+				cola.primero.avion.desabordaje--;
+			}
+			else{
+				//Se crean los pasajeros del avion y se meten en la cola simple
+				for (int i = 1;i < cola.primero.avion.pasajeros;i++){
+					Pasajero pasajero = ColaSimple.crearPasajero(contadorPasajeros,cola.primero.avion.id);
+					ColaSimple.queue(colaSimple,pasajero);
+                                        int mantenimiento = ListaSimple.crearEstaciones(listaMantenimiento, numeroEstaciones);
+                                       
+					for (int j = 0; j < pasajero.maletas; j++){
+						ListaDobleCircular.insertar(listaMaletas);
+					}
+                                        for(int k = 0; k < mantenimiento; k++ ){
+                                            ListaSimple.insertar(listaMantenimiento, mantenimiento);
+                                            Mantenimiento();
+                                        }
+                                }
+				actual1 = actual1 + "Avion " + cola.primero.avion.id + " pasa a estacion de mantenimiento.\n";
+				ColaSimpleAviones.queue(colaAviones,cola.primero.avion);
+				ColaDoblementeEnlazada.dequeue(cola);
+                               ldNodo aux1 = listaEscritorios.primero;
+                                while (aux1 != null){
+                                if (aux1.escritorio.cola.primero != null){
+				if (aux1.escritorio.cola.primero.pasajero.numeroTurnos > 0){
+					if (aux1.escritorio.pilaDocumentos.length != aux1.escritorio.cola.primero.pasajero.documentos){
+						for (int i = 0; i < aux1.escritorio.cola.primero.pasajero.documentos;i++){
+							Pila.push(aux1.escritorio.pilaDocumentos);
+						}
+					}
+					aux1.escritorio.cola.primero.pasajero.numeroTurnos--;
 				}
-				desabordaje(cola);
-				registrarPasajeros();
-				atender();
-				darMantenimiento();
-				escribirEnConsola("Pasajeros en cola para ser atendidos: " + colaSimple.length + ".\n");
-				escribirEnConsola(ListaDoblementeEnlazada.escribirInformacion(listaEscritorios));
-				escribirEnConsola("Cantidad de maletas en el sistema: " + listaMaletas.length + ".\n");
-				escribirEnConsola(ListaSimple.escribirInformacion(listaMantenimiento));
-				escribirEnConsola("///////////////Fin turno " + (contadorTurno - 1) + "///////////////\n");
-				if (CheckBox.isSelected()){
-					graficar();
-				}                      
-                                turnos = numeroTurnos - 1; 
-                                String tturnos = String.valueOf(turnos);
-				txtTurnos.setText(tturnos);
+				else{
+					for (int i = 0;i < aux1.escritorio.cola.primero.pasajero.maletas;i++){
+						ListaDobleCircular.eliminar(listaMaletas);
+					}
+					for (int i = 0;i < aux1.escritorio.cola.primero.pasajero.documentos;i++){
+						Pila.pop(aux1.escritorio.pilaDocumentos);
+					}
+					ColaSimple.dequeue(aux1.escritorio.cola);
+				}
+			}
+			aux1 = aux1.siguiente;
+		}
+                        ldNodo aux = listaEscritorios.primero;
+		while (aux != null){
+			if (aux.escritorio.cola.length < 10){
+				//Enviar pasajeros hasta llegar a 10 o quedarse sin pasajeros
+				while (ColaSimple.primero(colaSimple) != null && aux.escritorio.cola.length < 10){
+					ColaSimple.queue(aux.escritorio.cola,ColaSimple.primero(colaSimple));
+					ColaSimple.dequeue(colaSimple);
+                                        Escritorio escritorio = ListaDoblementeEnlazada.crearEscritorio(numeroEscritorios);
+                                        ListaDoblementeEnlazada.insertar(listaEscritorios, escritorio);
+				}
+				aux = aux.siguiente;
+
+			}
+			else{
+				aux = aux.siguiente;
 			}
 		}
+
+                                      
+                                }        
+                                
+			}
+		}
+                
+
+
+	
+		
+                        graficarGrafo();
+                        graficarf();
+                        pintarGrafo();               
+                        textEdit1.setText(actual1);        
+                        }
+                      
+                        
+                        
     }//GEN-LAST:event_btnTurnoActionPerformed
 
     private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
-        graficar();
+            System.exit(0);
     }//GEN-LAST:event_btnImprimirActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+    private void txtEstacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEstacionesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEstacionesActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Inicio().setVisible(true);
-            }
-        });
-   }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox CheckBox;
-    private javax.swing.JScrollPane ScrollArea;
     private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnTurno;
     private javax.swing.JButton inicio;
@@ -392,7 +444,9 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel label;
+    private javax.swing.JScrollPane panel;
     private javax.swing.JTextArea textEdit1;
     private javax.swing.JTextField txtAviones;
     private javax.swing.JTextField txtEscritorios;

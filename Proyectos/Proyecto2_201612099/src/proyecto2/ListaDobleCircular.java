@@ -69,7 +69,7 @@ public class ListaDobleCircular
 		texto += "label = \"Equipaje\";\n";
 		if (esVacia(lista) == 0){
 			ldcNodo aux = lista.primero;
-			texto += "\"Maleta " + aux.id + "\"";
+                        texto += "\"Maleta " + aux.id + "\"";
 			texto += "[label=\"Maleta: " + aux.id;
 			texto += "\" shape=record];\n";
 			aux = aux.siguiente;
@@ -81,6 +81,7 @@ public class ListaDobleCircular
 			}
 		}
 		texto += "{\n";
+		//PARA COLOCAR LAS RELACIONES
 		if (esVacia(lista) == 0){
 			ldcNodo aux = lista.primero;
 			if (aux.siguiente != aux && lista.length > 2){
@@ -96,6 +97,7 @@ public class ListaDobleCircular
 					texto += "\"Maleta " + aux.id + "\"->\"Maleta " + aux.siguiente.id + "\";\n";
 					texto += "\"Maleta " + aux.siguiente.id + "\"->\"Maleta " + aux.id + "\";\n";
 					aux = aux.siguiente;
+
 				}
 				else{
 					aux = aux.siguiente;

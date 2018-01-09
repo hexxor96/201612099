@@ -1,9 +1,14 @@
 package proyecto2;
 
 public class Proyecto2 {
-    
-public static void main(String[] args) {
-     Inicio a= new Inicio();   
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        Inicio i = new Inicio();
+        i.setVisible(true);
     }
     
 }

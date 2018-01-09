@@ -99,7 +99,8 @@ public class ColaDoblementeEnlazada
 				aux = aux.siguiente;
 			}
 		}
-		if (esVacia(cola) == 0){
+                //Para colocar las relaciones
+                        if (esVacia(cola) == 0){
 			Nodo aux = cola.primero;
 			while (aux != null){
 				if (aux.siguiente != null){
@@ -119,21 +120,22 @@ public class ColaDoblementeEnlazada
             public static Avion crearAvion(int id_){
 		Avion nuevo = new Avion();
 		nuevo.id = id_;
-		nuevo.desabordaje = (int) (Math.random()) % 3 + 1;
-		if (nuevo.desabordaje == 1){
+		nuevo.desabordaje = (int)(Math.random()*3) + 1;
+                int desabordaje1 = nuevo.desabordaje;
+		if (desabordaje1 == 1){
 			nuevo.tipo = "pequeño";
-			nuevo.pasajeros = (int) (Math.random()) % 5 + 5;
-			nuevo.mantenimiento = (int) (Math.random()) % 3 + 1;
+			nuevo.pasajeros = (int)(Math.random()*5) + 5;
+			nuevo.mantenimiento = (int)(Math.random()*3) + 1;
 		}
-		else if (nuevo.desabordaje == 2){
+		else if (desabordaje1 == 2){
 			nuevo.tipo = "mediano";
-			nuevo.pasajeros = (int) (Math.random()) % 10 + 15;
-			nuevo.mantenimiento =  (int) (Math.random()) % 3 + 2;
+			nuevo.pasajeros = (int)(Math.random()*10) + 15;
+			nuevo.mantenimiento =  (int)(Math.random()*3) + 2;
 		}
-		else if (nuevo.desabordaje == 3){
+		else if (desabordaje1 == 3){
 			nuevo.tipo = "grande";
-			nuevo.pasajeros =  (int) (Math.random()) % 10 + 30;
-			nuevo.mantenimiento = (int) (Math.random()) % 4 + 3;
+			nuevo.pasajeros =  (int)(Math.random()*10) + 30;
+			nuevo.mantenimiento = (int)(Math.random()*4) + 3;
 		}
 		return nuevo;
 	}

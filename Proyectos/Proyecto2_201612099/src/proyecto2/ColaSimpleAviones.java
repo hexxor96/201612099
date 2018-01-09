@@ -64,10 +64,11 @@ public class ColaSimpleAviones
 				texto += "}\" shape=record];\n";
 				aux = aux.siguiente;
 			}
-		if (esVacia(cola) == 0){
-			lNodo aux1 = cola.primero;
-			while (aux1 != null){
-				if (aux1.siguiente != null){
+            }      
+        if (esVacia(cola) == 0){
+			lNodo aux = cola.primero;
+			while (aux != null){
+				if (aux.siguiente != null){
 					texto += "\"Avion " + aux.avion.id + "\"->\"Avion " + aux.siguiente.avion.id + "\";\n";
 					aux = aux.siguiente;
 				}
@@ -76,8 +77,7 @@ public class ColaSimpleAviones
 				}
 			}
 		}
-            }    
-            texto += "}\n";
-            return texto;   
-        }
+		texto += "}\n";
+		return texto;
+	}
 }
